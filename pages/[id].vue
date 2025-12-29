@@ -1,0 +1,196 @@
+<template>
+  <div class="container">
+    <NuxtLink to="/" class="back-link">← Back to List</NuxtLink>
+
+    <div v-if="pending" class="loading">Loading Pokémon...</div>
+    <div v-else-if="error" class="error">Error: {{ error }}</div>
+
+    <div v-else-if="pokemon" class="profile">
+      <div class="profile-header">
+        <h1 class="pokemon-name">{{ capitalizeFirstLetter(pokemon.name) }}</h1>
+      </div>
+
+      <div class="profile-content">
+        <div class="image-container">
+          <img
+            :src="pokemon.image"
+            :alt="pokemon.name"
+            class="pokemon-image"
+          />
+        </div>
+
+        <div class="details-container">
+          <div class="detail-item">
+            <span class="detail-label">Height:</span>
+            <span class="detail-value">{{ formatHeight(pokemon.height) }}</span>
+          </div>
+
+          <div class="detail-item">
+            <span class="detail-label">Weight:</span>
+            <span class="detail-value">{{ formatWeight(pokemon.weight) }}</span>
+          </div>
+
+          <div class="detail-item">
+            <span class="detail-label">Abilities:</span>
+            <span class="detail-value">{{ formatAbilities(pokemon.abilities) }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script setup lang="ts">
+const route = useRoute()
+const { fetchPokemonById } = usePokemon()
+
+const pokemonId = computed(() => Number(route.params.id))
+
+const { data: pokemon, pending, error } = await useAsyncData(
+  `pokemon-${pokemonId.value}`,
+  () => fetchPokemonById(pokemonId.value)
+)
+
+const capitalizeFirstLetter = (str: string) => {
+  return str.charAt(0).toUpperCase() + str.slice(1)
+}
+
+const formatHeight = (height: number) => {
+  // Height is in decimeters, convert to meters
+  return `${(height / 10).toFixed(1)} m`
+}
+
+const formatWeight = (weight: number) => {
+  // Weight is in hectograms, convert to kilograms
+  return `${(weight / 10).toFixed(1)} kg`
+}
+
+const formatAbilities = (abilities: string[]) => {
+  return abilities
+    .map(ability =>
+      ability
+        .split('-')
+        .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+        .join(' ')
+    )
+    .join(', ')
+}
+</script>
+
+<style scoped>
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+}
+
+.back-link {
+  display: inline-block;
+  margin-bottom: 20px;
+  color: #4CAF50;
+  text-decoration: none;
+  font-size: 1rem;
+  transition: color 0.3s;
+}
+
+.back-link:hover {
+  color: #45a049;
+  text-decoration: underline;
+}
+
+.loading,
+.error {
+  text-align: center;
+  padding: 40px;
+  font-size: 1.2rem;
+}
+
+.error {
+  color: #d32f2f;
+}
+
+.profile {
+  background: white;
+  border: 2px solid #e0e0e0;
+  border-radius: 15px;
+  padding: 30px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.profile-header {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.pokemon-name {
+  font-size: 2.5rem;
+  color: #333;
+  margin: 0;
+  text-transform: capitalize;
+}
+
+.profile-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 30px;
+}
+
+.image-container {
+  text-align: center;
+}
+
+.pokemon-image {
+  width: 300px;
+  height: 300px;
+  object-fit: contain;
+}
+
+.details-container {
+  width: 100%;
+  max-width: 500px;
+}
+
+.detail-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px;
+  margin-bottom: 10px;
+  background: #f5f5f5;
+  border-radius: 8px;
+}
+
+.detail-label {
+  font-weight: 600;
+  color: #555;
+  font-size: 1.1rem;
+}
+
+.detail-value {
+  color: #333;
+  font-size: 1.1rem;
+}
+
+@media (max-width: 768px) {
+  .pokemon-name {
+    font-size: 2rem;
+  }
+
+  .pokemon-image {
+    width: 200px;
+    height: 200px;
+  }
+
+  .detail-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 5px;
+  }
+
+  .profile {
+    padding: 20px;
+  }
+}
+</style>
