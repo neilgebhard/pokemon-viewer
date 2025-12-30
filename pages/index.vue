@@ -27,11 +27,7 @@
           :to="`/${p.id}`"
           class="pokemon-card"
         >
-          <img
-            :src="p.thumbnailImage"
-            :alt="p.name"
-            class="pokemon-image"
-          />
+          <img :src="p.thumbnailImage" :alt="p.name" class="pokemon-image" />
           <h3 class="pokemon-name">{{ capitalizeFirstLetter(p.name) }}</h3>
         </NuxtLink>
       </div>
@@ -46,10 +42,11 @@
 <script setup lang="ts">
 const { fetchPokemonList } = usePokemon()
 
-const { data: pokemon, pending, error } = await useAsyncData(
-  'pokemon-list',
-  () => fetchPokemonList(60)
-)
+const {
+  data: pokemon,
+  pending,
+  error,
+} = await useAsyncData('pokemon-list', () => fetchPokemonList(60))
 
 const searchQuery = ref('')
 
@@ -58,9 +55,7 @@ const filteredPokemon = computed(() => {
   if (!searchQuery.value.trim()) return pokemon.value
 
   const query = searchQuery.value.toLowerCase().trim()
-  return pokemon.value.filter(p =>
-    p.name.toLowerCase().includes(query)
-  )
+  return pokemon.value.filter(p => p.name.toLowerCase().includes(query))
 })
 
 const capitalizeFirstLetter = (str: string) => {
@@ -73,7 +68,9 @@ const capitalizeFirstLetter = (str: string) => {
   max-width: 1200px;
   margin: 0 auto;
   padding: 20px;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  font-family:
+    -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu,
+    Cantarell, sans-serif;
 }
 
 .header {
@@ -119,7 +116,7 @@ const capitalizeFirstLetter = (str: string) => {
 }
 
 .search-input:focus {
-  border-color: #4CAF50;
+  border-color: #4caf50;
 }
 
 .results-count {
@@ -141,7 +138,9 @@ const capitalizeFirstLetter = (str: string) => {
   border-radius: 10px;
   padding: 15px;
   text-align: center;
-  transition: transform 0.2s, box-shadow 0.2s;
+  transition:
+    transform 0.2s,
+    box-shadow 0.2s;
   cursor: pointer;
   text-decoration: none;
   color: inherit;
@@ -151,7 +150,7 @@ const capitalizeFirstLetter = (str: string) => {
 .pokemon-card:hover {
   transform: translateY(-5px);
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-  border-color: #4CAF50;
+  border-color: #4caf50;
 }
 
 .pokemon-image {

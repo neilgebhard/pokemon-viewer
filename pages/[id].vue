@@ -12,11 +12,7 @@
 
       <div class="profile-content">
         <div class="image-container">
-          <img
-            :src="pokemon.image"
-            :alt="pokemon.name"
-            class="pokemon-image"
-          />
+          <img :src="pokemon.image" :alt="pokemon.name" class="pokemon-image" />
         </div>
 
         <div class="details-container">
@@ -32,7 +28,9 @@
 
           <div class="detail-item">
             <span class="detail-label">Abilities:</span>
-            <span class="detail-value">{{ formatAbilities(pokemon.abilities) }}</span>
+            <span class="detail-value">{{
+              formatAbilities(pokemon.abilities)
+            }}</span>
           </div>
         </div>
       </div>
@@ -46,9 +44,12 @@ const { fetchPokemonById } = usePokemon()
 
 const pokemonId = computed(() => Number(route.params.id))
 
-const { data: pokemon, pending, error } = await useAsyncData(
-  `pokemon-${pokemonId.value}`,
-  () => fetchPokemonById(pokemonId.value)
+const {
+  data: pokemon,
+  pending,
+  error,
+} = await useAsyncData(`pokemon-${pokemonId.value}`, () =>
+  fetchPokemonById(pokemonId.value)
 )
 
 const capitalizeFirstLetter = (str: string) => {
@@ -82,13 +83,15 @@ const formatAbilities = (abilities: string[]) => {
   max-width: 800px;
   margin: 0 auto;
   padding: 20px;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  font-family:
+    -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu,
+    Cantarell, sans-serif;
 }
 
 .back-link {
   display: inline-block;
   margin-bottom: 20px;
-  color: #4CAF50;
+  color: #4caf50;
   text-decoration: none;
   font-size: 1rem;
   transition: color 0.3s;
