@@ -2,6 +2,8 @@
 
 A modern web application for browsing and viewing detailed information about Pokémon, built with Nuxt 3 and TypeScript.
 
+**[View Live Demo](https://pokemon-viewer-ui.vercel.app/)**
+
 ## Features
 
 ### Core Functionality
