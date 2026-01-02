@@ -28,6 +28,23 @@ export interface PokemonAbility {
   slot: number
 }
 
+export interface PokemonType {
+  slot: number
+  type: {
+    name: string
+    url: string
+  }
+}
+
+export interface PokemonStat {
+  base_stat: number
+  effort: number
+  stat: {
+    name: string
+    url: string
+  }
+}
+
 export interface PokemonDetail {
   id: number
   name: string
@@ -35,6 +52,13 @@ export interface PokemonDetail {
   weight: number
   sprites: PokemonSprites
   abilities: PokemonAbility[]
+  types: PokemonType[]
+  stats: PokemonStat[]
+}
+
+export interface Stat {
+  name: string
+  value: number
 }
 
 export interface Pokemon {
@@ -45,6 +69,8 @@ export interface Pokemon {
   height: number
   weight: number
   abilities: string[]
+  types: string[]
+  stats: Stat[]
 }
 
 export const usePokemon = () => {
@@ -56,7 +82,7 @@ export const usePokemon = () => {
       )
 
       // Fetch detailed information for each Pokémon in parallel
-      const pokemonDetailsPromises = listResponse.results.map(async (pokemon) => {
+      const pokemonDetailsPromises = listResponse.results.map(async pokemon => {
         const detail = await $fetch<PokemonDetail>(pokemon.url)
 
         return {
@@ -66,7 +92,12 @@ export const usePokemon = () => {
           thumbnailImage: detail.sprites.front_default,
           height: detail.height,
           weight: detail.weight,
-          abilities: detail.abilities.map(a => a.ability.name)
+          abilities: detail.abilities.map(a => a.ability.name),
+          types: detail.types.map(t => t.type.name),
+          stats: detail.stats.map(s => ({
+            name: s.stat.name,
+            value: s.base_stat,
+          })),
         }
       })
 
@@ -91,7 +122,12 @@ export const usePokemon = () => {
         thumbnailImage: detail.sprites.front_default,
         height: detail.height,
         weight: detail.weight,
-        abilities: detail.abilities.map(a => a.ability.name)
+        abilities: detail.abilities.map(a => a.ability.name),
+        types: detail.types.map(t => t.type.name),
+        stats: detail.stats.map(s => ({
+          name: s.stat.name,
+          value: s.base_stat,
+        })),
       }
     } catch (error) {
       console.error(`Error fetching Pokémon ${id}:`, error)
@@ -101,6 +137,6 @@ export const usePokemon = () => {
 
   return {
     fetchPokemonList,
-    fetchPokemonById
+    fetchPokemonById,
   }
 }

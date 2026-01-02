@@ -8,6 +8,16 @@
     <div v-else-if="pokemon" class="profile">
       <div class="profile-header">
         <h1 class="pokemon-name">{{ capitalizeFirstLetter(pokemon.name) }}</h1>
+        <div class="type-badges">
+          <span
+            v-for="type in pokemon.types"
+            :key="type"
+            class="type-badge"
+            :style="{ backgroundColor: getTypeColor(type) }"
+          >
+            {{ type }}
+          </span>
+        </div>
       </div>
 
       <div class="profile-content">
@@ -33,6 +43,25 @@
             }}</span>
           </div>
         </div>
+
+        <div class="stats-container">
+          <h2 class="stats-title">Base Stats</h2>
+          <div v-for="stat in pokemon.stats" :key="stat.name" class="stat-item">
+            <div class="stat-header">
+              <span class="stat-name">{{ formatStatName(stat.name) }}</span>
+              <span class="stat-value">{{ stat.value }}</span>
+            </div>
+            <div class="stat-bar-background">
+              <div
+                class="stat-bar"
+                :style="{
+                  width: `${(stat.value / 255) * 100}%`,
+                  backgroundColor: getStatColor(stat.value),
+                }"
+              ></div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -41,6 +70,7 @@
 <script setup lang="ts">
 const route = useRoute()
 const { fetchPokemonById } = usePokemon()
+const { getTypeColor } = usePokemonTypes()
 
 const pokemonId = computed(() => Number(route.params.id))
 
@@ -75,6 +105,26 @@ const formatAbilities = (abilities: string[]) => {
         .join(' ')
     )
     .join(', ')
+}
+
+const formatStatName = (statName: string) => {
+  const statMap: Record<string, string> = {
+    hp: 'HP',
+    attack: 'Attack',
+    defense: 'Defense',
+    'special-attack': 'Sp. Attack',
+    'special-defense': 'Sp. Defense',
+    speed: 'Speed',
+  }
+  return statMap[statName] || statName
+}
+
+const getStatColor = (value: number) => {
+  if (value >= 150) return '#22c55e'
+  if (value >= 100) return '#3b82f6'
+  if (value >= 75) return '#f59e0b'
+  if (value >= 50) return '#eab308'
+  return '#ef4444'
 }
 </script>
 
@@ -129,8 +179,25 @@ const formatAbilities = (abilities: string[]) => {
 .pokemon-name {
   font-size: 2.5rem;
   color: #333;
-  margin: 0;
+  margin: 0 0 15px 0;
   text-transform: capitalize;
+}
+
+.type-badges {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.type-badge {
+  padding: 6px 16px;
+  border-radius: 16px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: white;
+  text-transform: uppercase;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
 }
 
 .profile-content {
@@ -174,6 +241,57 @@ const formatAbilities = (abilities: string[]) => {
 .detail-value {
   color: #333;
   font-size: 1.1rem;
+}
+
+.stats-container {
+  width: 100%;
+  max-width: 500px;
+  margin-top: 10px;
+}
+
+.stats-title {
+  font-size: 1.5rem;
+  color: #333;
+  margin: 0 0 20px 0;
+  text-align: center;
+}
+
+.stat-item {
+  margin-bottom: 15px;
+}
+
+.stat-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 5px;
+}
+
+.stat-name {
+  font-weight: 600;
+  color: #555;
+  font-size: 0.95rem;
+}
+
+.stat-value {
+  font-weight: 700;
+  color: #333;
+  font-size: 0.95rem;
+}
+
+.stat-bar-background {
+  width: 100%;
+  height: 20px;
+  background: #e0e0e0;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.stat-bar {
+  height: 100%;
+  border-radius: 10px;
+  transition: width 0.5s ease;
+  min-width: 2%;
 }
 
 @media (max-width: 768px) {

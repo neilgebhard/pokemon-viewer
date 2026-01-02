@@ -29,6 +29,16 @@
         >
           <img :src="p.thumbnailImage" :alt="p.name" class="pokemon-image" />
           <h3 class="pokemon-name">{{ capitalizeFirstLetter(p.name) }}</h3>
+          <div class="type-badges">
+            <span
+              v-for="type in p.types"
+              :key="type"
+              class="type-badge"
+              :style="{ backgroundColor: getTypeColor(type) }"
+            >
+              {{ type }}
+            </span>
+          </div>
         </NuxtLink>
       </div>
 
@@ -41,6 +51,7 @@
 
 <script setup lang="ts">
 const { fetchPokemonList } = usePokemon()
+const { getTypeColor } = usePokemonTypes()
 
 const {
   data: pokemon,
@@ -163,8 +174,25 @@ const capitalizeFirstLetter = (str: string) => {
 .pokemon-name {
   font-size: 1rem;
   color: #333;
-  margin: 0;
+  margin: 0 0 8px 0;
   text-transform: capitalize;
+}
+
+.type-badges {
+  display: flex;
+  gap: 5px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.type-badge {
+  padding: 3px 10px;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: white;
+  text-transform: uppercase;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
 }
 
 .no-results {
